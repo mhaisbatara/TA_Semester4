@@ -2,6 +2,14 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AnalisisController;
+
+Route::post('/input-data', [AnalisisController::class, 'inputData']);
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
 
 /*
 |--------------------------------------------------------------------------
