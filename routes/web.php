@@ -1,38 +1,81 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Auth;
+
+// use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TingkatanObesitasController;
 use App\Models\UserMongo;
+use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| WEB ROUTES
 |--------------------------------------------------------------------------
 */
 
+// =============================
+// PUBLIC
+// =============================
 Route::get('/', function () {
     return view('welcome');
 });
 
-
 // =============================
-// AUTH ROUTES
+// AUTH
 // =============================
 
 // Register
 Route::get('/register', [RegisterController::class, 'index'])->name('register');
 Route::post('/register', [RegisterController::class, 'store'])->name('register.post');
 
-// Login
-Route::get('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/login', [AuthController::class, 'loginPost'])->name('login.post');
+Route::prefix('admin')->group(function () {
+
+    Route::get('/login', [AdminAuthController::class, 'login'])->name('admin.login');
+    Route::post('/login', [AdminAuthController::class, 'loginPost'])->name('admin.login.post');
+
+});
+
+// Logout (FIX)
+Route::post('/logout', function () {
+    Auth::logout(); // logout user
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+
+    return redirect('/admin/login');
+})->name('logout');
+
+
+// =============================
+// PROTECTED (HARUS LOGIN)
+// =============================
+Route::middleware(['auth', 'admin'])->group(function () {
+
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // CRUD OBESITAS
+    Route::prefix('dashboard/obesitas')->group(function () {
+
+        Route::get('/', [TingkatanObesitasController::class, 'index'])->name('obesitas.index');
+        Route::get('/create', [TingkatanObesitasController::class, 'create'])->name('obesitas.create');
+        Route::post('/store', [TingkatanObesitasController::class, 'store'])->name('obesitas.store');
+
+        Route::get('/edit/{id}', [TingkatanObesitasController::class, 'edit'])->name('obesitas.edit');
+        Route::put('/update/{id}', [TingkatanObesitasController::class, 'update'])->name('obesitas.update');
+
+        Route::delete('/delete/{id}', [TingkatanObesitasController::class, 'destroy'])->name('obesitas.delete');
+
+    });
+
+});
 
 
 // =============================
 // TEST MONGODB
 // =============================
-
 Route::get('/cobamongo', function () {
 
     UserMongo::create([
