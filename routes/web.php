@@ -68,10 +68,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
         Route::delete('/delete/{id}', [TingkatanObesitasController::class, 'destroy'])->name('obesitas.delete');
 
+        
     });
 
 });
 
+Route::get('/tes-dashboard', function () {
+    return view('auth.admin.dashboard');
+});
 
 // =============================
 // TEST MONGODB
