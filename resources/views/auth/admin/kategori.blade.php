@@ -19,7 +19,7 @@
         <div class="card-body">
 
             <!-- FORM -->
-            <form method="POST" action="/dashboard/kategori" class="row g-3 mb-4">
+            <form method="POST" action="{{ route('kategori.store') }}" class="row g-3 mb-4">
                 @csrf
 
                 <input type="hidden" name="id" value="{{ $editData->_id ?? '' }}">
@@ -55,9 +55,9 @@
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $d['nama_kategori'] }}</td>
                             <td>
-                                <a href="/dashboard/kategori/edit/{{ $d['_id'] }}" 
-                                   class="btn btn-warning btn-sm">
-                                   Edit
+                                <a href="{{ route('kategori.edit', $d['_id']) }}" 
+                                class="btn btn-warning btn-sm">
+                                Edit
                                 </a>
                             </td>
                         </tr>

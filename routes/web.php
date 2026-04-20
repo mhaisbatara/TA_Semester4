@@ -70,7 +70,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
         Route::delete('/delete/{id}', [TingkatanObesitasController::class, 'destroy'])->name('obesitas.delete');
 
-        
+        // KATEGORI
+        Route::get('/dashboard/kategori', [KategoriController::class, 'index'])->name('kategori.index');
+        Route::post('/dashboard/kategori', [KategoriController::class, 'store'])->name('kategori.store');
+        Route::get('/dashboard/kategori/edit/{id}', [KategoriController::class, 'edit'])->name('kategori.edit');
+            
     });
 
 });

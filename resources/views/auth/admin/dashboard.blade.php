@@ -62,7 +62,7 @@
                         <span class="font-medium">Input Artikel</span>
                     </a>
 
-                    <a href="#" class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300">
+                    <a href="{{ route('kategori.index') }}" class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300">
                         <i class="fas fa-layer-group text-pink-400"></i>
                         <span class="font-medium">Kategori</span>
                     </a>
