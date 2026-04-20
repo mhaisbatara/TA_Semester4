@@ -16,12 +16,12 @@ class DashboardController extends Controller
             $allData = $collection->find()->toArray();
             $recentData = collect(array_slice($allData, 0, 5));
 
-            return view('dashboard.index', compact('allData', 'recentData'));
+            return view('auth.admin.dashboard', compact('allData', 'recentData'));
 
         } catch (\Exception $e) {
             $recentData = collect([]);
             $allData = [];
-            return view('dashboard.index', compact('allData', 'recentData'));
+            return view('auth.admin.dashboard', compact('allData', 'recentData'));
         }
     }
 }
