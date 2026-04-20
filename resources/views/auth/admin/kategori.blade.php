@@ -48,7 +48,7 @@
     <!-- HEADER -->
     <div class="mb-8">
         <h1 class="text-3xl font-bold mb-6 text-green-600">
-    Manajemen Kategori</h1>
+     Kategori</h1>
     </div>
     <!-- FORM TAMBAH -->
     <div class="bg-white p-6 rounded-2xl shadow-lg mb-6">
@@ -78,7 +78,7 @@
         </form>
     </div>
 
-    <!-- TABLE -->
+
     <div class="bg-white p-6 rounded-2xl shadow-lg">
         <h2 class="text-xl font-semibold mb-4">Data Kategori</h2>
 
