@@ -3,10 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+
 // use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TingkatanObesitasController;
+use App\Http\Controllers\KategoriController;
 use App\Models\UserMongo;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 
@@ -55,7 +57,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+    
     // CRUD OBESITAS
     Route::prefix('dashboard/obesitas')->group(function () {
 
@@ -91,3 +93,7 @@ Route::get('/cobamongo', function () {
 
     return "Data berhasil masuk MongoDB!";
 });
+
+Route::get('/dashboard/kategori', [KategoriController::class, 'index']);
+Route::post('/dashboard/kategori', [KategoriController::class, 'store']);
+Route::get('/dashboard/kategori/edit/{id}', [KategoriController::class, 'edit']);
