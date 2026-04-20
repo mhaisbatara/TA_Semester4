@@ -14,32 +14,60 @@ class KategoriController extends Controller
         return $client->db_obesitas_workout->kategori;
     }
 
+    // TAMPIL DATA
     public function index()
     {
         $kategori = $this->getCollection()->find()->toArray();
         return view('auth.admin.kategori', compact('kategori'));
     }
 
+    // TAMBAH & EDIT
     public function store(Request $request)
     {
+        // ✅ VALIDASI
+        $request->validate([
+            'nama_kategori' => 'required|string|max:255'
+        ], [
+            'nama_kategori.required' => 'Nama kategori tidak boleh kosong'
+        ]);
+
         $collection = $this->getCollection();
 
+        // ✅ FORMAT OTOMATIS KAPITAL (Title Case)
+        $namaKategori = ucwords(strtolower(trim($request->nama_kategori)));
+
+        // 🔍 CEK DUPLIKAT
+        $existing = $collection->findOne([
+            'nama_kategori' => $namaKategori
+        ]);
+
+        // ❌ JIKA DUPLIKAT
+        if ($existing && (!$request->id || (string)$existing->_id != $request->id)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Nama kategori sudah ada!');
+        }
+
         if ($request->id) {
-            // UPDATE
+            // ✏️ UPDATE
             $collection->updateOne(
                 ['_id' => new ObjectId($request->id)],
-                ['$set' => ['nama_kategori' => $request->nama_kategori]]
+                ['$set' => [
+                    'nama_kategori' => $namaKategori
+                ]]
             );
         } else {
-            // INSERT
+            // ➕ INSERT
             $collection->insertOne([
-                'nama_kategori' => $request->nama_kategori
+                'nama_kategori' => $namaKategori
             ]);
         }
 
-        return redirect('/dashboard/kategori');
+        return redirect('/dashboard/kategori')
+            ->with('success', 'Data berhasil disimpan');
     }
 
+    // EDIT
     public function edit($id)
     {
         $collection = $this->getCollection();
@@ -51,5 +79,18 @@ class KategoriController extends Controller
         $kategori = $collection->find()->toArray();
 
         return view('auth.admin.kategori', compact('kategori', 'editData'));
+    }
+
+    // HAPUS
+    public function delete($id)
+    {
+        $collection = $this->getCollection();
+
+        $collection->deleteOne([
+            '_id' => new ObjectId($id)
+        ]);
+
+        return redirect('/dashboard/kategori')
+            ->with('success', 'Data berhasil dihapus');
     }
 }
