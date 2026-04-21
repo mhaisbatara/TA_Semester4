@@ -60,7 +60,7 @@
                     <span>Dashboard</span>
                 </a>
 
-                <a href="#" class="sidebar-item flex items-center gap-4 px-4 py-4 rounded-2xl font-medium">
+                <a href="{{ route('manajemen.data') }}" class="sidebar-item flex items-center gap-4 px-4 py-4 rounded-2xl font-medium">
                     <i class="fas fa-database text-blue-500 text-lg"></i>
                     <span>Data Management</span>
                 </a>

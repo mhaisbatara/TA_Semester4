@@ -57,7 +57,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     // CRUD OBESITAS
     Route::prefix('dashboard/obesitas')->group(function () {
 
@@ -74,7 +74,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/dashboard/kategori', [KategoriController::class, 'index'])->name('kategori.index');
         Route::post('/dashboard/kategori', [KategoriController::class, 'store'])->name('kategori.store');
         Route::get('/dashboard/kategori/edit/{id}', [KategoriController::class, 'edit'])->name('kategori.edit');
-            
+
     });
 
 });
@@ -101,3 +101,7 @@ Route::get('/cobamongo', function () {
 Route::get('/dashboard/kategori', [KategoriController::class, 'index']);
 Route::post('/dashboard/kategori', [KategoriController::class, 'store']);
 Route::get('/dashboard/kategori/edit/{id}', [KategoriController::class, 'edit']);
+
+Route::get('/dashboard/manajemen-data', function () {
+    return view('auth.admin.manajemen_data');
+    })->name('manajemen.data');
