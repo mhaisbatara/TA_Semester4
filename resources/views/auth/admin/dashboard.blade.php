@@ -65,7 +65,7 @@
                     <span>Data Management</span>
                 </a>
 
-                <a href="#" class="sidebar-item flex items-center gap-4 px-4 py-4 rounded-2xl font-medium">
+<a href="{{ route('articles.index') }}" class="sidebar-item flex items-center gap-4 px-4 py-4 rounded-2xl font-medium">
                     <i class="fas fa-newspaper text-violet-500 text-lg"></i>
                     <span>Articles</span>
                 </a>

@@ -74,6 +74,14 @@
                         </a>
                     </li>
 
+                    <!-- Articles -->
+                    <li>
+                        <a href="{{ route('articles.index') }}" class="flex items-center space-x-3 p-3 rounded-2xl sidebar-hover {{ request()->routeIs('articles*') ? 'bg-white/20 border-r-4 border-violet-400 text-white' : 'text-gray-300' }}">
+                            <i class="fas fa-newspaper w-5"></i>
+                            <span class="font-medium">Articles</span>
+                        </a>
+                    </li>
+
                     <!-- Analytics -->
                     <li>
                         <a href="#" class="flex items-center space-x-3 p-3 rounded-2xl sidebar-hover text-gray-300">

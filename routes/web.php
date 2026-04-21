@@ -11,6 +11,8 @@ use App\Http\Controllers\TingkatanObesitasController;
 use App\Http\Controllers\KategoriController;
 use App\Models\UserMongo;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\ArticleController;
+// use App\Http\Controllers\ArticleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +40,10 @@ Route::prefix('admin')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'login'])->name('admin.login');
     Route::post('/login', [AdminAuthController::class, 'loginPost'])->name('admin.login.post');
 
+});
+
+Route::middleware('auth')->group(function () {
+    Route::resource('articles', ArticleController::class);
 });
 
 // Logout (FIX)
