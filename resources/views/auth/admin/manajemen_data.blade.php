@@ -7,6 +7,9 @@
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -36,12 +39,13 @@
 <div class="flex min-h-screen">
 
     <!-- SIDEBAR -->
-    <aside class="w-64 bg-white border-r p-6 hidden lg:flex flex-col shadow-sm sticky top-0 h-screen">
-        <div>
+    <aside class="w-64 bg-white border-r p-6 hidden lg:flex flex-col justify-between shadow-sm sticky top-0 h-screen">
 
+        <div>
+            <!-- LOGO -->
             <div class="flex items-center gap-4 mb-10">
                 <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg">
-                    <i class="fas fa-database text-white text-xl"></i>
+                    <i class="fas fa-chart-line text-white text-xl"></i>
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold">SiObe</h1>
@@ -49,35 +53,83 @@
                 </div>
             </div>
 
+            <!-- MENU -->
             <nav class="space-y-2">
-                <a href="/dashboard" class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-2xl">
+
+                <a href="/dashboard"
+                   class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-2xl
+                   {{ request()->is('dashboard') ? 'active' : '' }}">
                     <i class="fas fa-house text-emerald-500"></i>
                     Dashboard
                 </a>
 
-                <a href="{{ route('manajemen.data') }}" class="sidebar-item active flex items-center gap-4 px-4 py-3 rounded-2xl">
+                <a href="{{ route('manajemen.data') }}"
+                   class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-2xl
+                   {{ request()->is('dashboard/manajemen-data') ? 'active' : '' }}">
                     <i class="fas fa-database text-blue-500"></i>
-                    Manajemen Data
+                    Data Management
                 </a>
 
-                <a href="{{ route('kategori.index') }}" class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-2xl">
+                <a href="#" class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-2xl">
+                    <i class="fas fa-newspaper text-violet-500"></i>
+                    Articles
+                </a>
+
+                <a href="{{ route('kategori.index') }}"
+                   class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-2xl
+                   {{ request()->is('dashboard/kategori') ? 'active' : '' }}">
                     <i class="fas fa-layer-group text-pink-500"></i>
                     Categories
                 </a>
+
+                <a href="#" class="sidebar-item flex items-center gap-4 px-4 py-3 rounded-2xl">
+                    <i class="fas fa-gear text-yellow-500"></i>
+                    Settings
+                </a>
+
+                <!-- LOGOUT -->
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit"
+                        class="w-full sidebar-item flex items-center gap-4 px-4 py-3 rounded-2xl text-left">
+                        <i class="fas fa-right-from-bracket text-red-500"></i>
+                        Logout
+                    </button>
+                </form>
+
             </nav>
         </div>
+
     </aside>
 
     <!-- MAIN -->
     <main class="flex-1 p-8 w-full">
 
-        <h1 class="text-3xl font-bold mb-6 text-green-600">
-            Manajemen Data Obesitas
-        </h1>
+        <!-- HEADER -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-green-600">
+                    Manajemen Data Obesitas
+                </h1>
+                <p class="text-gray-500 mt-1">
+                    Upload dan kelola data pasien obesitas
+                </p>
+            </div>
+
+            <div class="hidden lg:flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm">
+                <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white">
+                    AD
+                </div>
+                <div>
+                    <p class="font-semibold">Admin</p>
+                    <p class="text-xs text-gray-500">Administrator</p>
+                </div>
+            </div>
+        </div>
 
         <div class="space-y-6">
 
-            <!-- UPLOAD EXCEL -->
+            <!-- UPLOAD -->
             <div class="bg-white p-6 rounded-2xl shadow-lg">
                 <h2 class="text-xl font-semibold mb-4">Upload Data Excel</h2>
 
@@ -94,7 +146,7 @@
                 </form>
             </div>
 
-            <!-- TABEL DATA -->
+            <!-- TABLE -->
             <div class="bg-white p-6 rounded-2xl shadow-lg">
                 <h2 class="text-xl font-semibold mb-4">Data Obesitas</h2>
 
@@ -113,7 +165,6 @@
                         </thead>
 
                         <tbody>
-                            {{-- NANTI DARI DATABASE --}}
                             @forelse($data ?? [] as $index => $d)
                             <tr class="border-b hover:bg-gray-50">
                                 <td class="p-3">{{ $index + 1 }}</td>
