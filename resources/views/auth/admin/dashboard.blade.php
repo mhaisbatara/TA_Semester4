@@ -49,7 +49,7 @@
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-slate-800">SiObe</h1>
-                    <p class="text-sm text-gray-500">Admin Dashboard</p>
+                    <p class="text-sm text-gray-500">Admin Manajemen Kategori</p>
                 </div>
             </div>
 
