@@ -4,23 +4,20 @@
 
 @section('content')
 
-<div class="flex justify-between items-center mb-8">
+<!-- HEADER - SAMA SEPERTI HALAMAN ARTICLES -->
+<div class="flex flex-col lg:flex-row justify-between gap-4 mb-6">
     <div>
-        <h1 class="text-3xl font-bold text-green-600">
-            Manajemen Data Obesitas
-        </h1>
-        <p class="text-gray-500 mt-1">
-            Upload dan kelola data pasien obesitas
+        <h2 class="text-4xl lg:text-5xl font-bold text-slate-800">Manajemen Data</h2>
+        <p class="text-gray-500 mt-2 text-lg">
+            Upload dan kelola data pasien obesitas di sini.
         </p>
     </div>
 
-    <div class="hidden lg:flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm">
-        <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white">
-            AD
-        </div>
+    <div class="bg-white border border-gray-200 rounded-3xl px-6 py-4 shadow-sm flex items-center gap-4">
+        <img src="https://ui-avatars.com/api/?name=Admin&background=10b981&color=fff" class="w-12 h-12 rounded-full">
         <div>
-            <p class="font-semibold">Admin</p>
-            <p class="text-xs text-gray-500">Administrator</p>
+            <h4 class="font-bold text-lg text-slate-800">Admin</h4>
+            <p class="text-gray-500 text-sm">Administrator</p>
         </div>
     </div>
 </div>
@@ -28,7 +25,7 @@
 <div class="space-y-6">
 
     <!-- UPLOAD -->
-    <div class="bg-white p-6 rounded-2xl shadow-lg">
+    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
         <h2 class="text-xl font-semibold mb-4">Upload Data Excel</h2>
 
         <form action="#" method="POST" enctype="multipart/form-data" class="space-y-4">
@@ -45,20 +42,20 @@
     </div>
 
     <!-- TABLE -->
-    <div class="bg-white p-6 rounded-2xl shadow-lg">
+    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
         <h2 class="text-xl font-semibold mb-4">Data Obesitas</h2>
 
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead>
                     <tr class="bg-green-500 text-white">
-                        <th class="p-3 text-left">No</th>
+                        <th class="p-3 text-left rounded-l-xl">No</th>
                         <th class="p-3 text-left">Nama</th>
                         <th class="p-3 text-left">Usia</th>
                         <th class="p-3 text-left">Gender</th>
                         <th class="p-3 text-left">Berat</th>
                         <th class="p-3 text-left">Tinggi</th>
-                        <th class="p-3 text-left">BMI</th>
+                        <th class="p-3 text-left rounded-r-xl">BMI</th>
                     </tr>
                 </thead>
 
@@ -66,17 +63,18 @@
                     @forelse($data ?? [] as $index => $d)
                     <tr class="border-b hover:bg-gray-50">
                         <td class="p-3">{{ $index + 1 }}</td>
-                        <td class="p-3">{{ $d['nama'] }}</td>
-                        <td class="p-3">{{ $d['usia'] }}</td>
-                        <td class="p-3">{{ $d['gender'] }}</td>
-                        <td class="p-3">{{ $d['berat'] }}</td>
-                        <td class="p-3">{{ $d['tinggi'] }}</td>
-                        <td class="p-3 font-semibold text-green-600">{{ $d['bmi'] }}</td>
+                        <td class="p-3">{{ $d['nama'] ?? '-' }}</td>
+                        <td class="p-3">{{ $d['usia'] ?? '-' }}</td>
+                        <td class="p-3">{{ $d['gender'] ?? '-' }}</td>
+                        <td class="p-3">{{ $d['berat'] ?? '-' }}</td>
+                        <td class="p-3">{{ $d['tinggi'] ?? '-' }}</td>
+                        <td class="p-3 font-semibold text-green-600">{{ $d['bmi'] ?? '-' }}</td>
                     </tr>
                     @empty
                     <tr>
                         <td colspan="7" class="text-center p-4 text-gray-500">
-                            Data belum ada
+                            <i class="fas fa-database text-4xl mb-2 text-gray-300 block"></i>
+                            Data belum ada. Silakan upload file Excel.
                         </td>
                     </tr>
                     @endforelse

@@ -10,6 +10,7 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Models\UserMongo;
+// use App\Http\Controllers\TingkatanObesitasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,6 +71,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('kategori', TingkatanObesitasController::class);
+});
 
 /*
 |--------------------------------------------------------------------------

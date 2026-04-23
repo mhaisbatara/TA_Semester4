@@ -2,75 +2,75 @@
 
 namespace App\Http\Controllers;
 
-use MongoDB\Client;
+use App\Models\TingkatanObesitas;
 use Illuminate\Http\Request;
 
 class TingkatanObesitasController extends Controller
 {
-    private $collection;
-
-    public function __construct()
-    {
-        $client = new Client("mongodb://127.0.0.1:27017");
-        $this->collection = $client->db_obesitas_workout->tingkatan_obesitas;
-    }
-
-    // READ
     public function index()
     {
-        $data = $this->collection->find()->toArray();
-        return view('dashboard.index', compact('data'));
+        $kategoris = TingkatanObesitas::orderBy('bmi_min', 'asc')->get();
+        return view('admin.kategori.index', compact('kategoris'));
     }
 
-    // FORM CREATE
     public function create()
     {
-        return view('dashboard.obesitas.create');
+        return view('admin.kategori.create');
     }
 
-    // STORE
     public function store(Request $request)
     {
-        $this->collection->insertOne([
+        $request->validate([
+            'kategori' => 'required|string|max:50',
+            'bmi_min' => 'required|numeric|min:0',
+            'bmi_max' => 'required|numeric|gt:bmi_min',
+            'keterangan' => 'nullable|string'
+        ]);
+
+        TingkatanObesitas::create([
             'kategori' => $request->kategori,
-            'bmi_min' => (float)$request->bmi_min,
-            'bmi_max' => (float)$request->bmi_max,
+            'bmi_min' => (float) $request->bmi_min,
+            'bmi_max' => (float) $request->bmi_max,
             'keterangan' => $request->keterangan
         ]);
 
-        return redirect()->route('obesitas.index');
+        return redirect()->route('kategori.index')
+            ->with('success', 'Kategori berhasil ditambahkan');
     }
 
-    // FORM EDIT
     public function edit($id)
     {
-        $data = $this->collection->findOne(['_id' => new \MongoDB\BSON\ObjectId($id)]);
-        return view('dashboard.obesitas.edit', compact('data'));
+        $kategori = TingkatanObesitas::findOrFail($id);
+        return view('admin.kategori.edit', compact('kategori'));
     }
 
-    // UPDATE
     public function update(Request $request, $id)
     {
-        $this->collection->updateOne(
-            ['_id' => new \MongoDB\BSON\ObjectId($id)],
-            ['$set' => [
-                'kategori' => $request->kategori,
-                'bmi_min' => (float)$request->bmi_min,
-                'bmi_max' => (float)$request->bmi_max,
-                'keterangan' => $request->keterangan
-            ]]
-        );
-
-        return redirect()->route('obesitas.index');
-    }
-
-    // DELETE
-    public function destroy($id)
-    {
-        $this->collection->deleteOne([
-            '_id' => new \MongoDB\BSON\ObjectId($id)
+        $request->validate([
+            'kategori' => 'required|string|max:50',
+            'bmi_min' => 'required|numeric|min:0',
+            'bmi_max' => 'required|numeric|gt:bmi_min',
+            'keterangan' => 'nullable|string'
         ]);
 
-        return redirect()->route('obesitas.index');
+        $kategori = TingkatanObesitas::findOrFail($id);
+        $kategori->update([
+            'kategori' => $request->kategori,
+            'bmi_min' => (float) $request->bmi_min,
+            'bmi_max' => (float) $request->bmi_max,
+            'keterangan' => $request->keterangan
+        ]);
+
+        return redirect()->route('kategori.index')
+            ->with('success', 'Kategori berhasil diperbarui');
+    }
+
+    public function destroy($id)
+    {
+        $kategori = TingkatanObesitas::findOrFail($id);
+        $kategori->delete();
+
+        return redirect()->route('kategori.index')
+            ->with('success', 'Kategori berhasil dihapus');
     }
 }
