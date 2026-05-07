@@ -5,16 +5,25 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AnalisisController;
 use App\Http\Controllers\Api\ChatController;
 
-// Public routes
+// =======================
+// PUBLIC ROUTES
+// =======================
+
 Route::post('/register',   [AuthController::class, 'register']);
 Route::post('/login',      [AuthController::class, 'login']);
 Route::post('/input-data', [AnalisisController::class, 'inputData']);
 
-// Protected routes (butuh token)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user',    [AuthController::class, 'user']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+// 🤖 CHAT AI (tanpa login)
+Route::post('/chat', [ChatController::class, 'send']);
 
-    // 🤖 Chat AI
-    Route::post('/chat',   [ChatController::class, 'send']);
+
+// =======================
+// PROTECTED ROUTES
+// =======================
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/user',    [AuthController::class, 'user']);
+
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
