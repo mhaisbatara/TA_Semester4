@@ -4,7 +4,7 @@
 
 @section('content')
 
-<!-- HEADER - SAMA SEPERTI HALAMAN ARTICLES -->
+<!-- HEADER -->
 <div class="flex flex-col lg:flex-row justify-between gap-4 mb-6">
     <div>
         <h2 class="text-4xl lg:text-5xl font-bold text-slate-800">Manajemen Data</h2>
@@ -24,56 +24,153 @@
 
 <div class="space-y-6">
 
-    <!-- UPLOAD -->
-    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-        <h2 class="text-xl font-semibold mb-4">Upload Data Excel</h2>
+    {{-- ===================== NOTIFIKASI ===================== --}}
+    @if(session('success'))
+        <div class="flex items-center gap-3 bg-green-50 border border-green-300 text-green-800 px-5 py-4 rounded-2xl shadow-sm">
+            <i class="fas fa-check-circle text-green-500 text-xl"></i>
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
 
-        <form action="#" method="POST" enctype="multipart/form-data" class="space-y-4">
+    @if(session('error'))
+        <div class="flex items-center gap-3 bg-red-50 border border-red-300 text-red-800 px-5 py-4 rounded-2xl shadow-sm">
+            <i class="fas fa-times-circle text-red-500 text-xl"></i>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="bg-red-50 border border-red-300 text-red-800 px-5 py-4 rounded-2xl shadow-sm">
+            <ul class="list-disc list-inside space-y-1">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    {{-- ===================== UPLOAD ===================== --}}
+    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+        <h2 class="text-xl font-semibold mb-1">Upload Data Excel</h2>
+        <p class="text-gray-400 text-sm mb-4">Format yang diterima: <span class="font-medium text-gray-600">.xlsx / .xls</span> — Maks. 10MB</p>
+
+        <form action="{{ route('admin.upload-data') }}"
+              method="POST"
+              enctype="multipart/form-data"
+              id="uploadForm"
+              class="space-y-4">
             @csrf
 
-            <input type="file" name="file"
-                class="w-full border p-3 rounded-xl"
-                accept=".xls,.xlsx" required>
+            {{-- Dropzone area --}}
+            <label for="fileInput"
+                   id="dropZone"
+                   class="flex flex-col items-center justify-center w-full border-2 border-dashed border-green-300 rounded-2xl p-8 cursor-pointer hover:bg-green-50 transition">
+                <i class="fas fa-file-excel text-green-400 text-4xl mb-3"></i>
+                <p class="text-gray-500 text-sm" id="fileNameDisplay">
+                    Klik atau seret file Excel ke sini
+                </p>
+                <input type="file"
+                       name="file"
+                       id="fileInput"
+                       accept=".xlsx,.xls"
+                       class="hidden"
+                       onchange="updateFileName(this)"
+                       required>
+            </label>
 
-            <button class="bg-green-500 text-white px-6 py-3 rounded-xl hover:bg-green-600">
-                <i class="fa fa-upload"></i> Upload Data
-            </button>
+            <div class="flex items-center gap-3">
+                <button type="submit"
+                        id="uploadBtn"
+                        disabled
+                        class="flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-xl hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                    <i class="fa fa-upload" id="uploadIcon"></i>
+                    <span id="uploadLabel">Upload Data</span>
+                </button>
+
+                @if(isset($totalData) && $totalData > 0)
+                <form action="{{ route('admin.delete-all-data') }}"
+                      method="POST"
+                      onsubmit="return confirm('Yakin ingin menghapus semua {{ $totalData }} data?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit"
+                            class="flex items-center gap-2 bg-red-500 text-white px-6 py-3 rounded-xl hover:bg-red-600 transition">
+                        <i class="fas fa-trash"></i> Hapus Semua Data
+                    </button>
+                </form>
+                @endif
+            </div>
         </form>
     </div>
 
-    <!-- TABLE -->
+    {{-- ===================== TABEL ===================== --}}
     <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-        <h2 class="text-xl font-semibold mb-4">Data Obesitas</h2>
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold">Data Obesitas</h2>
+            @if(isset($totalData))
+                <span class="bg-green-100 text-green-700 text-sm font-medium px-4 py-1 rounded-full">
+                    Total: {{ $totalData }} data
+                </span>
+            @endif
+        </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full">
+            <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-green-500 text-white">
-                        <th class="p-3 text-left rounded-l-xl">No</th>
-                        <th class="p-3 text-left">Nama</th>
-                        <th class="p-3 text-left">Usia</th>
-                        <th class="p-3 text-left">Gender</th>
-                        <th class="p-3 text-left">Berat</th>
-                        <th class="p-3 text-left">Tinggi</th>
-                        <th class="p-3 text-left rounded-r-xl">BMI</th>
+                        <th class="p-3 text-left rounded-l-xl whitespace-nowrap">No</th>
+                        <th class="p-3 text-left whitespace-nowrap">Usia</th>
+                        <th class="p-3 text-left whitespace-nowrap">Jenis Kelamin</th>
+                        <th class="p-3 text-left whitespace-nowrap">Tinggi (cm)</th>
+                        <th class="p-3 text-left whitespace-nowrap">Berat (kg)</th>
+                        <th class="p-3 text-left whitespace-nowrap">Konsumsi Alkohol</th>
+                        <th class="p-3 text-left whitespace-nowrap">Makan Tinggi Kalori</th>
+                        <th class="p-3 text-left whitespace-nowrap">Frek. Sayur</th>
+                        <th class="p-3 text-left whitespace-nowrap">Makan/Hari</th>
+                        <th class="p-3 text-left whitespace-nowrap">Monitor Kalori</th>
+                        <th class="p-3 text-left whitespace-nowrap">Merokok</th>
+                        <th class="p-3 text-left whitespace-nowrap">Konsumsi Air</th>
+                        <th class="p-3 text-left whitespace-nowrap">Riwayat Keluarga Obesitas</th>
+                        <th class="p-3 text-left whitespace-nowrap">Aktivitas Fisik</th>
+                        <th class="p-3 text-left whitespace-nowrap">Waktu Layar (HP)</th>
+                        <th class="p-3 text-left whitespace-nowrap">Kebiasaan Ngemil</th>
+                        <th class="p-3 text-left whitespace-nowrap">Transportasi</th>
+                        <th class="p-3 text-left rounded-r-xl whitespace-nowrap">Kategori Obesitas</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    @forelse($data ?? [] as $index => $d)
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="p-3">{{ $index + 1 }}</td>
-                        <td class="p-3">{{ $d['nama'] ?? '-' }}</td>
-                        <td class="p-3">{{ $d['usia'] ?? '-' }}</td>
-                        <td class="p-3">{{ $d['gender'] ?? '-' }}</td>
-                        <td class="p-3">{{ $d['berat'] ?? '-' }}</td>
-                        <td class="p-3">{{ $d['tinggi'] ?? '-' }}</td>
-                        <td class="p-3 font-semibold text-green-600">{{ $d['bmi'] ?? '-' }}</td>
+                    @forelse($data as $index => $d)
+                    <tr class="border-b hover:bg-gray-50 transition">
+                        <td class="p-3 text-gray-500">
+                            {{ ($data->currentPage() - 1) * $data->perPage() + $index + 1 }}
+                        </td>
+                        <td class="p-3">{{ $d->usia ?? '-' }}</td>
+                        <td class="p-3">{{ $d->jenis_kelamin ?? '-' }}</td>
+                        <td class="p-3">{{ $d->tinggi_badan ?? '-' }}</td>
+                        <td class="p-3">{{ $d->berat_badan ?? '-' }}</td>
+                        <td class="p-3">{{ $d->konsumsi_alkohol ?? '-' }}</td>
+                        <td class="p-3">{{ $d->sering_makan_tinggi_kalori ?? '-' }}</td>
+                        <td class="p-3">{{ $d->frekuensi_konsumsi_sayur ?? '-' }}</td>
+                        <td class="p-3">{{ $d->jumlah_makan_harian ?? '-' }}</td>
+                        <td class="p-3">{{ $d->monitoring_kalori ?? '-' }}</td>
+                        <td class="p-3">{{ $d->merokok ?? '-' }}</td>
+                        <td class="p-3">{{ $d->konsumsi_air ?? '-' }}</td>
+                        <td class="p-3">{{ $d->riwayat_keluarga_overweight ?? '-' }}</td>
+                        <td class="p-3">{{ $d->aktivitas_fisik ?? '-' }}</td>
+                        <td class="p-3">{{ $d->waktu_layar ?? '-' }}</td>
+                        <td class="p-3">{{ $d->kebiasaan_ngemil ?? '-' }}</td>
+                        <td class="p-3">{{ $d->transportasi ?? '-' }}</td>
+                        <td class="p-3">
+                            <span class="bg-green-100 text-green-700 px-2 py-1 rounded-lg font-semibold text-xs whitespace-nowrap">
+                                {{ $d->kategori_obesitas ?? '-' }}
+                            </span>
+                        </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="text-center p-4 text-gray-500">
-                            <i class="fas fa-database text-4xl mb-2 text-gray-300 block"></i>
+                        <td colspan="15" class="text-center py-12 text-gray-400">
+                            <i class="fas fa-database text-5xl mb-3 text-gray-200 block"></i>
                             Data belum ada. Silakan upload file Excel.
                         </td>
                     </tr>
@@ -82,8 +179,40 @@
             </table>
         </div>
 
+        {{-- Pagination --}}
+        @if(isset($data) && $data->hasPages())
+            <div class="mt-4">
+                {{ $data->links() }}
+            </div>
+        @endif
     </div>
 
 </div>
+
+{{-- ===================== SCRIPT ===================== --}}
+<script>
+function updateFileName(input) {
+    const display = document.getElementById('fileNameDisplay');
+    const btn     = document.getElementById('uploadBtn');
+
+    if (input.files && input.files[0]) {
+        display.innerHTML = '<span class="text-green-600 font-medium">' + input.files[0].name + '</span>';
+        btn.disabled = false;
+    } else {
+        display.textContent = 'Klik atau seret file Excel ke sini';
+        btn.disabled = true;
+    }
+}
+
+document.getElementById('uploadForm').addEventListener('submit', function () {
+    const btn    = document.getElementById('uploadBtn');
+    const label  = document.getElementById('uploadLabel');
+    const icon   = document.getElementById('uploadIcon');
+
+    btn.disabled = true;
+    icon.className = 'fas fa-spinner fa-spin';
+    label.textContent = 'Mengupload...';
+});
+</script>
 
 @endsection
