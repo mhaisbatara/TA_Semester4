@@ -94,5 +94,7 @@
     // Active state untuk mobile (opsional)
 </script>
 
+@stack('scripts')
+
 </body>
 </html>
