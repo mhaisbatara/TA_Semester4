@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use MongoDB\Client;
 use App\Imports\DataObesitasImport;
 use App\Models\DataObesitas;
+use App\Models\User;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardController extends Controller
@@ -119,15 +120,8 @@ class DashboardController extends Controller
         '/Normal/i'
     )->count();
 
-    // TOTAL OBESITAS
-    $kasusObesitas = DataObesitas::whereIn(
-    'kategori_obesitas',
-    [
-        'Obesity Type I',
-        'Obesity Type II',
-        'Obesity Type III'
-    ]
-    )->count();
+    // TOTAL USER LOGIN (selain admin)
+    $totalUserLogin = User::where('role', '!=', 'admin')->count();
 
     // DATA KATEGORI UNTUK CHART
     $kategoriData = DataObesitas::raw(function($collection) {
@@ -152,11 +146,11 @@ class DashboardController extends Controller
     }
 
     return view('auth.admin.dashboard', compact(
-        'totalPasien',
-        'pasienSehat',
-        'kasusObesitas',
-        'labels',
-        'data'
-    ));
+    'totalPasien',
+    'pasienSehat',
+    'totalUserLogin',
+    'labels',
+    'data'
+));
 }
 }

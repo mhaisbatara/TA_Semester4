@@ -37,6 +37,17 @@
 <!-- STAT -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
+    <!-- TOTAL USER LOGIN -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm">
+        <h3 class="text-gray-500 text-sm">
+            Total User Login
+        </h3>
+
+        <p class="text-3xl font-bold mt-3 text-blue-500">
+            {{ number_format($totalUserLogin) }}
+        </p>
+    </div>
+
     <!-- TOTAL -->
     <div class="bg-white rounded-2xl p-5 shadow-sm">
         <h3 class="text-gray-500 text-sm">
@@ -56,17 +67,6 @@
 
         <p class="text-3xl font-bold mt-3 text-emerald-600">
             {{ number_format($pasienSehat) }}
-        </p>
-    </div>
-
-    <!-- OBESITAS -->
-    <div class="bg-white rounded-2xl p-5 shadow-sm">
-        <h3 class="text-gray-500 text-sm">
-            Kasus Obesitas
-        </h3>
-
-        <p class="text-3xl font-bold mt-3 text-red-500">
-            {{ number_format($kasusObesitas) }}
         </p>
     </div>
 
