@@ -2,13 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiController;
-<<<<<<< HEAD
+// <<<<<<< HEAD
 use App\Http\Controllers\ObesityController;
 
 Route::post('/predict-obesity', [ObesityController::class, 'predict']);
-=======
+// =======
 use App\Models\Article;
->>>>>>> d9838031c64c6b0632eb2aeb01a346469c5bae87
+// >>>>>>> d9838031c64c6b0632eb2aeb01a346469c5bae87
 
 // =======================
 // PUBLIC ROUTES

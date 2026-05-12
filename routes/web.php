@@ -64,7 +64,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('articles', ArticleController::class);
 
     // KATEGORI
-    Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
+    // Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
 
 });
 
@@ -106,3 +106,15 @@ Route::get('/debug-excel', function () {
         'first_data' => $rows[0][1] ?? 'tidak ada',
     ]);
 });
+
+
+use App\Http\Controllers\Admin\ForgotPasswordController;
+
+Route::get('/admin/forgot-password', [ForgotPasswordController::class, 'showForm'])
+    ->name('admin.forgot-password.form');
+
+Route::post('/admin/forgot-password/verify', [ForgotPasswordController::class, 'verifyEmail'])
+    ->name('admin.forgot-password.verify');
+
+Route::post('/admin/forgot-password/reset', [ForgotPasswordController::class, 'resetPassword'])
+    ->name('admin.forgot-password.reset');
