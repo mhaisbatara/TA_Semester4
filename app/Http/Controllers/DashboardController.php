@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use MongoDB\Client;
 use App\Imports\DataObesitasImport;
 use App\Models\DataObesitas;
+use App\Models\User;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardController extends Controller
@@ -107,21 +108,49 @@ class DashboardController extends Controller
         }
     }
 
-    public function index()
-    {
-        try {
-            $client = new Client("mongodb://127.0.0.1:27017");
-            $collection = $client->db_obesitas_workout->tingkatan_obesitas;
+            public function index()
+{
+    // TOTAL PASIEN
+    $totalPasien = DataObesitas::count();
 
-            $allData = $collection->find()->toArray();
-            $recentData = collect(array_slice($allData, 0, 5));
+    // PASIEN SEHAT
+    $pasienSehat = DataObesitas::where(
+        'kategori_obesitas',
+        'regex',
+        '/Normal/i'
+    )->count();
 
-            return view('auth.admin.dashboard', compact('allData', 'recentData'));
+    // TOTAL USER LOGIN (selain admin)
+    $totalUserLogin = User::where('role', '!=', 'admin')->count();
 
-        } catch (\Exception $e) {
-            $recentData = collect([]);
-            $allData = [];
-            return view('auth.admin.dashboard', compact('allData', 'recentData'));
-        }
+    // DATA KATEGORI UNTUK CHART
+    $kategoriData = DataObesitas::raw(function($collection) {
+        return $collection->aggregate([
+            [
+                '$group' => [
+                    '_id' => '$kategori_obesitas',
+                    'total' => [
+                        '$sum' => 1
+                    ]
+                ]
+            ]
+        ]);
+    });
+
+    $labels = [];
+    $data = [];
+
+    foreach ($kategoriData as $item) {
+        $labels[] = $item->_id;
+        $data[] = $item->total;
     }
+
+    return view('auth.admin.dashboard', compact(
+    'totalPasien',
+    'pasienSehat',
+    'totalUserLogin',
+    'labels',
+    'data'
+));
+}
 }
