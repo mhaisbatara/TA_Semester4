@@ -40,4 +40,3 @@ class AuthController extends Controller
         return back()->with('error', 'Login gagal. Periksa kredensial Anda.');
     }
 }
-

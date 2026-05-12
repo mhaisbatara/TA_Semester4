@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Controllers\ObesityController;
+
+Route::post('/predict-obesity', [ObesityController::class, 'predict']);
 
 // =======================
 // PUBLIC ROUTES
