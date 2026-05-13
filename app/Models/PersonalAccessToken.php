@@ -17,19 +17,21 @@ class PersonalAccessToken extends Model implements HasAbilities
     ];
 
     protected $casts = [
-        'abilities'    => 'array',   // ← fix agar tersimpan sebagai array, bukan string
+        // 'abilities'    => 'array',   // ← fix agar tersimpan sebagai array, bukan string
         'last_used_at' => 'datetime',
         'expires_at'   => 'datetime',
     ];
 
     public function can($ability): bool
-    {
-        $abs = is_string($this->abilities)
-            ? json_decode($this->abilities, true)
-            : ($this->abilities ?? []);
+{
+    $abs = $this->abilities ?? [];
 
-        return in_array('*', $abs) || in_array($ability, $abs);
+    if (is_string($abs)) {
+        $abs = json_decode($abs, true) ?? [];
     }
+
+    return in_array('*', $abs) || in_array($ability, $abs);
+}
 
     public function cant($ability): bool
     {
@@ -42,13 +44,21 @@ class PersonalAccessToken extends Model implements HasAbilities
     }
 
     public static function findToken($token)
-    {
-        if (!str_contains($token, '|')) return null;
-
-        [$id, $plain] = explode('|', $token, 2);
-
-        return static::where('_id', $id)
-            ->where('token', hash('sha256', $plain))
-            ->first();
+{
+    // Token tanpa | → hash langsung
+    if (!str_contains($token, '|')) {
+        return static::where('token', hash('sha256', $token))->first();
     }
+
+    [$id, $plain] = explode('|', $token, 2);
+
+    // Cari berdasarkan hash saja, tanpa filter _id
+    $instance = static::where('token', hash('sha256', $plain))->first();
+
+    if ($instance) {
+        return $instance;
+    }
+
+    return null;
+}
 }

@@ -41,22 +41,26 @@ class User extends Model implements Authenticatable, HasApiTokensContract
     }
 
     // Custom createToken — bebas dari Sanctum SQL builder
-    public function createToken(string $name, array $abilities = ['*'])
-    {
-        $plain = \Illuminate\Support\Str::random(40);
+ public function createToken(string $name, array $abilities = ['*'])
+{
+    $plain = \Illuminate\Support\Str::random(40);
 
-        $token = \App\Models\PersonalAccessToken::create([
-            'name'           => $name,
-            'token'          => hash('sha256', $plain),
-            'abilities'      => $abilities,
-            'tokenable_id'   => (string) $this->id,
-            'tokenable_type' => static::class,
-        ]);
+    $token = \App\Models\PersonalAccessToken::create([
+        'name'           => $name,
+        'token'          => hash('sha256', $plain),
+        'abilities'      => $abilities, // array langsung
+        'tokenable_id'   => (string) $this->_id,
+        'tokenable_type' => static::class,
+    ]);
 
-        $result = new \stdClass();
-        $result->accessToken    = $token;
-        $result->plainTextToken = $token->getKey() . '|' . $plain;
+    $result = new \stdClass();
+    $result->accessToken    = $token;
+    $result->plainTextToken = $token->getKey() . '|' . $plain;
 
-        return $result;
-    }
+    return $result;
+}
+public function pushPrediksi(array $record): bool
+{
+    return (bool) static::where('_id', $this->_id)->push('riwayat_prediksi', $record);
+}
 }
