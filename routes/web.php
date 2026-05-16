@@ -9,6 +9,7 @@ use App\Http\Controllers\TingkatanObesitasController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\UserController;
 use App\Models\UserMongo;
 
 /*
@@ -54,6 +55,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // DASHBOARD
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // DATA USER
+    Route::get('/data_user', [UserController::class, 'index'])->name('users.index');
+    Route::delete('/data_user/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
     // MANAJEMEN DATA ✅ (tidak duplikat, pakai controller untuk kirim $data & $totalData)
     Route::get('/manajemen-data', [DashboardController::class, 'manajemenData'])->name('manajemen.data');
