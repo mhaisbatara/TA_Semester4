@@ -28,6 +28,11 @@
     .slug-preview { font-family: monospace; background: #f9fafb; padding: 0.5rem; border-radius: 8px; font-size: 0.875rem; color: #6b7280; }
     .current-image { margin-top: 0.5rem; padding: 0.75rem; background: #f9fafb; border-radius: 12px; display: flex; align-items: center; gap: 1rem; }
     .current-image img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
+    .input-icon-wrap { position: relative; }
+    .input-icon-wrap .icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; pointer-events: none; }
+    .input-icon-wrap input { padding-left: 2.5rem; }
+    .sumber-valid { border-color: #10b981 !important; }
+    .sumber-invalid { border-color: #ef4444 !important; }
 </style>
 
 <div class="form-container">
@@ -69,6 +74,31 @@
                            value="{{ old('penulis', $article->penulis ?? Auth::user()->name ?? 'Admin') }}">
                 </div>
 
+                <!-- SUMBER ARTIKEL -->
+                <div class="form-group">
+                    <label>
+                        Sumber Artikel
+                        <span class="text-gray-400 font-normal text-sm">(opsional)</span>
+                    </label>
+                    <div class="input-icon-wrap">
+                        <span class="icon"><i class="fas fa-link"></i></span>
+                        <input type="url" name="sumber" id="sumber"
+                               placeholder="https://contoh.com/artikel-asli"
+                               value="{{ old('sumber', $article->sumber ?? '') }}">
+                    </div>
+                    <small class="text-gray-500 block mt-1">
+                        Isi jika artikel berasal dari sumber eksternal
+                    </small>
+                    <div id="sumber-preview" class="mt-2 hidden">
+                        <a id="sumber-link" href="#" target="_blank"
+                           class="text-emerald-600 text-sm flex items-center gap-1 hover:underline">
+                            <i class="fas fa-external-link-alt text-xs"></i>
+                            <span id="sumber-link-text"></span>
+                        </a>
+                    </div>
+                    @error('sumber') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                </div>
+
                 <div class="form-group">
                     <label>Status</label>
                     <select name="status" id="status">
@@ -91,7 +121,8 @@
                     <input type="text" id="tag-input" placeholder="obesitas,kesehatan,diet"
                            value="{{ old('tag', is_array($article->tag) ? implode(',', $article->tag) : $article->tag) }}">
                     <div class="tag-preview" id="tag-preview"></div>
-                    <input type="hidden" name="tag" id="tag-hidden" value="{{ is_array($article->tag) ? json_encode($article->tag) : $article->tag }}">
+                    <input type="hidden" name="tag" id="tag-hidden"
+                           value="{{ is_array($article->tag) ? json_encode($article->tag) : $article->tag }}">
                 </div>
 
                 <div class="form-group">
@@ -131,7 +162,8 @@
 
         <!-- Buttons -->
         <div class="flex gap-4 justify-end mt-8">
-            <a href="{{ route('articles.index') }}" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
+            <a href="{{ route('articles.index') }}"
+               class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
                 Batal
             </a>
             <button type="submit" class="btn-update">
@@ -158,25 +190,59 @@
     // Tag Preview & Processing
     function initTagPreview() {
         const tagInput = document.getElementById('tag-input');
-        const tagValue = tagInput.value;
-        if (tagValue) {
-            const tags = tagValue.split(',').map(tag => tag.trim()).filter(tag => tag);
-            const preview = document.getElementById('tag-preview');
-            preview.innerHTML = tags.map(tag => `<span class="tag-chip">#${tag}</span>`).join('');
+        if (tagInput.value) {
+            const tags = tagInput.value.split(',').map(tag => tag.trim()).filter(tag => tag);
+            document.getElementById('tag-preview').innerHTML =
+                tags.map(tag => `<span class="tag-chip">#${tag}</span>`).join('');
         }
     }
 
     document.getElementById('tag-input').addEventListener('input', function() {
         const tags = this.value.split(',').map(tag => tag.trim()).filter(tag => tag);
         const preview = document.getElementById('tag-preview');
-        const hidden = document.getElementById('tag-hidden');
+        const hidden  = document.getElementById('tag-hidden');
 
         preview.innerHTML = tags.map(tag => `<span class="tag-chip">#${tag}</span>`).join('');
         hidden.value = JSON.stringify(tags);
     });
 
+    // Sumber / Link Preview & Validation
+    function initSumberPreview() {
+        const input = document.getElementById('sumber');
+        if (input.value.trim()) {
+            input.dispatchEvent(new Event('input'));
+        }
+    }
+
+    document.getElementById('sumber').addEventListener('input', function() {
+        const val     = this.value.trim();
+        const preview = document.getElementById('sumber-preview');
+        const link    = document.getElementById('sumber-link');
+        const linkTxt = document.getElementById('sumber-link-text');
+
+        if (val === '') {
+            preview.classList.add('hidden');
+            this.classList.remove('sumber-valid', 'sumber-invalid');
+            return;
+        }
+
+        try {
+            const url = new URL(val);
+            this.classList.add('sumber-valid');
+            this.classList.remove('sumber-invalid');
+            preview.classList.remove('hidden');
+            link.href          = url.href;
+            linkTxt.textContent = url.hostname + (url.pathname !== '/' ? url.pathname : '');
+        } catch (_) {
+            this.classList.add('sumber-invalid');
+            this.classList.remove('sumber-valid');
+            preview.classList.add('hidden');
+        }
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
         initTagPreview();
+        initSumberPreview();
     });
 </script>
 

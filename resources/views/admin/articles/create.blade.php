@@ -26,6 +26,11 @@
     .tag-preview { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
     .tag-chip { background: #eff6ff; color: #2563eb; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; }
     .slug-preview { font-family: monospace; background: #f9fafb; padding: 0.5rem; border-radius: 8px; font-size: 0.875rem; color: #6b7280; }
+    .input-icon-wrap { position: relative; }
+    .input-icon-wrap .icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; pointer-events: none; }
+    .input-icon-wrap input { padding-left: 2.5rem; }
+    .sumber-valid { border-color: #10b981 !important; }
+    .sumber-invalid { border-color: #ef4444 !important; }
 </style>
 
 <div class="form-container">
@@ -61,8 +66,33 @@
 
                 <div class="form-group">
                     <label>Penulis</label>
-                    <input type="text" name="penulis" id="penulis" value="{{ Auth::user()->name ?? 'Admin' }}"
+                    <input type="text" name="penulis" id="penulis"
+                           value="{{ Auth::user()->name ?? 'Admin' }}"
                            placeholder="Nama penulis">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Sumber Artikel
+                        <span class="text-gray-400 font-normal text-sm">(opsional)</span>
+                    </label>
+                    <div class="input-icon-wrap">
+                        <span class="icon"><i class="fas fa-link"></i></span>
+                        <input type="url" name="sumber" id="sumber"
+                               placeholder="https://contoh.com/artikel-asli"
+                               value="{{ old('sumber') }}">
+                    </div>
+                    <small class="text-gray-500 block mt-1">
+                        Isi jika artikel berasal dari sumber eksternal
+                    </small>
+                    <div id="sumber-preview" class="mt-2 hidden">
+                        <a id="sumber-link" href="#" target="_blank"
+                           class="text-emerald-600 text-sm flex items-center gap-1 hover:underline">
+                            <i class="fas fa-external-link-alt text-xs"></i>
+                            <span id="sumber-link-text"></span>
+                        </a>
+                    </div>
+                    @error('sumber') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="form-group">
@@ -115,7 +145,8 @@
 
         <!-- Buttons -->
         <div class="flex gap-4 justify-end mt-8">
-            <a href="{{ route('articles.index') }}" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
+            <a href="{{ route('articles.index') }}"
+               class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
                 Batal
             </a>
             <button type="submit" class="btn-submit">
@@ -143,22 +174,51 @@
     document.getElementById('tag-input').addEventListener('input', function() {
         const tags = this.value.split(',').map(tag => tag.trim()).filter(tag => tag);
         const preview = document.getElementById('tag-preview');
-        const hidden = document.getElementById('tag-hidden');
+        const hidden  = document.getElementById('tag-hidden');
 
         preview.innerHTML = tags.map(tag => `<span class="tag-chip">#${tag}</span>`).join('');
         hidden.value = JSON.stringify(tags);
     });
 
-    // Trigger slug if old value exists
+    // Sumber / Link Preview
+    document.getElementById('sumber').addEventListener('input', function() {
+        const val     = this.value.trim();
+        const preview = document.getElementById('sumber-preview');
+        const link    = document.getElementById('sumber-link');
+        const linkTxt = document.getElementById('sumber-link-text');
+
+        if (val === '') {
+            preview.classList.add('hidden');
+            this.classList.remove('sumber-valid', 'sumber-invalid');
+            return;
+        }
+
+        try {
+            const url = new URL(val);
+            // URL valid
+            this.classList.add('sumber-valid');
+            this.classList.remove('sumber-invalid');
+            preview.classList.remove('hidden');
+            link.href      = url.href;
+            linkTxt.textContent = url.hostname + (url.pathname !== '/' ? url.pathname : '');
+        } catch (_) {
+            // URL tidak valid
+            this.classList.add('sumber-invalid');
+            this.classList.remove('sumber-valid');
+            preview.classList.add('hidden');
+        }
+    });
+
+    // Trigger on page load jika ada old value
     document.addEventListener('DOMContentLoaded', function() {
         const judulInput = document.getElementById('judul');
-        if (judulInput.value) {
-            judulInput.dispatchEvent(new Event('input'));
-        }
+        if (judulInput.value) judulInput.dispatchEvent(new Event('input'));
+
         const tagInput = document.getElementById('tag-input');
-        if (tagInput.value) {
-            tagInput.dispatchEvent(new Event('input'));
-        }
+        if (tagInput.value) tagInput.dispatchEvent(new Event('input'));
+
+        const sumberInput = document.getElementById('sumber');
+        if (sumberInput.value) sumberInput.dispatchEvent(new Event('input'));
     });
 </script>
 
