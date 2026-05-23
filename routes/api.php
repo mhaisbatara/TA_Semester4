@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiController;
-use App\Http\Controllers\Api\ObesityController;
 use App\Models\Article;
 
 // =======================
@@ -15,7 +14,7 @@ Route::post('/input-data', [ApiController::class, 'inputData']);
 Route::post('/chat',       [ApiController::class, 'chat']);
 
 // Prediksi obesitas (public)
-Route::post('/predict-obesity', [ObesityController::class, 'predict']);
+Route::post('/predict-obesity', [ApiController::class, 'predict']);
 
 // Artikel
 Route::get('/articles', function () {
@@ -23,6 +22,15 @@ Route::get('/articles', function () {
         Article::where('status', 'published')->get()
     );
 });
+
+// Serve image route (bypass symlink issue on artisan serve)
+Route::get('/image/{path}', function ($path) {
+    $fullPath = storage_path('app/public/' . $path);
+    if (!file_exists($fullPath)) {
+        abort(404);
+    }
+    return response()->file($fullPath);
+})->where('path', '.*');
 
 // =======================
 // PROTECTED ROUTES
@@ -33,6 +41,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [ApiController::class, 'logout']);
 
     // Simpan & history prediksi obesitas
-    Route::post('/obesity/save',    [ObesityController::class, 'save']);
-    Route::get('/obesity/history',  [ObesityController::class, 'history']);
+    Route::post('/obesity/save',    [ApiController::class, 'save']);
+    Route::get('/obesity/history',  [ApiController::class, 'history']);
 });

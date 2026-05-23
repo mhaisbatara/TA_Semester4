@@ -169,7 +169,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="15" class="text-center py-12 text-gray-400">
+                        <td colspan="18" class="text-center py-12 text-gray-400">
                             <i class="fas fa-database text-5xl mb-3 text-gray-200 block"></i>
                             Data belum ada. Silakan upload file Excel.
                         </td>
