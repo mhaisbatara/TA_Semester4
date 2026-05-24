@@ -49,6 +49,9 @@ class DataObesitasImport implements ToCollection, WithHeadingRow, WithChunkReadi
                     'merokok'                     => $raw['merokok'] ?? null,
                     'konsumsi_air'                => $raw['konsumsi_air'] ?? null,
                     'riwayat_keluarga_overweight' => $raw['riwayat_keluarga_overweight'] ?? null,
+                    'aktivitas_fisik'             => $raw['aktivitas_fisik'] ?? null,   // ← ditambahkan
+                    'waktu_layar'                 => $raw['waktu_layar'] ?? null,        // ← ditambahkan
+                    'kebiasaan_ngemil'            => $raw['kebiasaan_ngemil'] ?? null,   // ← ditambahkan
                     'transportasi'                => $raw['transportasi'] ?? null,
                     'kategori_obesitas'           => $raw['kategori_obesitas'] ?? null,
                     'created_at'                  => now(),
