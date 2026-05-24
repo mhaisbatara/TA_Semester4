@@ -54,6 +54,7 @@
         <h2 class="text-xl font-semibold mb-1">Upload Data Excel</h2>
         <p class="text-gray-400 text-sm mb-4">Format yang diterima: <span class="font-medium text-gray-600">.xlsx / .xls</span> — Maks. 10MB</p>
 
+        {{-- Form Upload --}}
         <form action="{{ route('admin.upload-data') }}"
               method="POST"
               enctype="multipart/form-data"
@@ -86,24 +87,39 @@
                     <i class="fa fa-upload" id="uploadIcon"></i>
                     <span id="uploadLabel">Upload Data</span>
                 </button>
-
-                @if(isset($totalData) && $totalData > 0)
-                <form action="{{ route('admin.delete-all-data') }}"
-                      method="POST"
-                      onsubmit="return confirm('Yakin ingin menghapus semua {{ $totalData }} data?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit"
-                            class="flex items-center gap-2 bg-red-500 text-white px-6 py-3 rounded-xl hover:bg-red-600 transition">
-                        <i class="fas fa-trash"></i> Hapus Semua Data
-                    </button>
-                </form>
-                @endif
             </div>
         </form>
+
+        {{-- Form Hapus Semua Data — dipisah dari form upload agar tidak nested --}}
+        @if(isset($totalData) && $totalData > 0)
+        <form action="{{ route('admin.delete-all-data') }}"
+              method="POST"
+              id="deleteAllForm"
+              class="mt-3">
+            @csrf
+            @method('DELETE')
+            <button type="button"
+                    onclick="confirmDeleteAll()"
+                    class="flex items-center gap-2 bg-red-500 text-white px-6 py-3 rounded-xl hover:bg-red-600 transition">
+                <i class="fas fa-trash"></i> Hapus Semua Data
+            </button>
+        </form>
+        @endif
     </div>
 
     {{-- ===================== TABEL ===================== --}}
+    {{--
+        Kolom yang ada di database (hasil tinker):
+        usia, jenis_kelamin, tinggi_badan, berat_badan,
+        konsumsi_alkohol, sering_makan_tinggi_kalori,
+        frekuensi_konsumsi_sayur, jumlah_makan_harian,
+        monitoring_kalori, merokok, konsumsi_air,
+        riwayat_keluarga_overweight, transportasi, kategori_obesitas
+
+        Kolom aktivitas_fisik, waktu_layar, kebiasaan_ngemil
+        TIDAK tersimpan di DB — perlu fix di controller/import.
+        Sementara kolom ini tetap ditampilkan dengan nilai dari DB (akan '-' jika belum ada).
+    --}}
     <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold">Data Obesitas</h2>
@@ -213,6 +229,17 @@ document.getElementById('uploadForm').addEventListener('submit', function () {
     icon.className = 'fas fa-spinner fa-spin';
     label.textContent = 'Mengupload...';
 });
+
+function confirmDeleteAll() {
+    const totalData = {{ $totalData ?? 0 }};
+    if (confirm('Yakin ingin menghapus semua ' + totalData + ' data? Tindakan ini tidak dapat dibatalkan!')) {
+        const form = document.getElementById('deleteAllForm');
+        const btn = form.querySelector('button');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
+        form.submit();
+    }
+}
 </script>
 
 @endsection
