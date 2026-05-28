@@ -70,10 +70,7 @@
                     <span>Articles</span>
                 </a>
 
-                <a href="{{ route('kategori.index') }}" class="sidebar-item {{ request()->routeIs('kategori*') ? 'active' : '' }} flex items-center gap-4 px-4 py-4 rounded-2xl font-medium">
-                    <i class="fas fa-layer-group text-pink-500 text-lg"></i>
-                    <span>Categories</span>
-                </a>
+
 
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf

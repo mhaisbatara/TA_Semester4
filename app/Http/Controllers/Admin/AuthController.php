@@ -10,7 +10,7 @@ class AuthController extends Controller
 {
     public function login()
     {
-        return view('auth.admin.login');
+        return view('auth.login');
     }
 
     public function loginPost(Request $request)

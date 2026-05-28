@@ -23,7 +23,7 @@ class UserController extends Controller
         $totalAdmin  = User::where('role', 'admin')->count();
         $totalMember = User::where('role', 'user')->count();
 
-        return view('auth.admin.data_user', compact('users', 'totalUsers', 'totalAdmin', 'totalMember', 'search'));
+        return view('admin.data_user', compact('users', 'totalUsers', 'totalAdmin', 'totalMember', 'search'));
     }
 
     public function destroy($id)

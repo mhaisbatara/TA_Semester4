@@ -16,6 +16,13 @@ Route::post('/chat',       [ApiController::class, 'chat']);
 // Prediksi obesitas (public)
 Route::post('/predict-obesity', [ApiController::class, 'predict']);
 
+// Endpoint Test Koneksi
+Route::get('/test', function () {
+    return response()->json([
+        'status' => 'success'
+    ]);
+});
+
 // Artikel
 Route::get('/articles', function () {
     return response()->json(

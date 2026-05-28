@@ -61,7 +61,7 @@ class DashboardController extends Controller
         $totalData = DataObesitas::count();
         $data      = DataObesitas::orderBy('created_at', 'desc')->paginate(10);
 
-        return view('auth.admin.manajemen_data', compact('data', 'totalData'));
+        return view('admin.manajemen_data', compact('data', 'totalData'));
     }
 
     // Upload & import file Excel ke MongoDB
@@ -145,7 +145,7 @@ class DashboardController extends Controller
         $data[] = $item->total;
     }
 
-    return view('auth.admin.dashboard', compact(
+    return view('admin.dashboard', compact(
     'totalPasien',
     'pasienSehat',
     'totalUserLogin',

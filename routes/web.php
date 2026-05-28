@@ -5,8 +5,6 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\TingkatanObesitasController;
-use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\UserController;
@@ -71,10 +69,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // KATEGORI
     // Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
 
-});
-
-Route::middleware(['auth'])->group(function () {
-    Route::resource('kategori', TingkatanObesitasController::class);
 });
 
 /*
