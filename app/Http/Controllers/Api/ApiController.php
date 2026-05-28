@@ -85,6 +85,33 @@ class ApiController extends Controller
             ],
         ]);
     }
+    public function changePassword(Request $request)
+{
+    $request->validate([
+        'old_password' => 'required',
+        'new_password' => 'required|min:6',
+    ]);
+
+    $user = $request->user();
+
+    // Fix bcrypt $2b$ → $2y$ (sama seperti login)
+    $hashedPassword = str_replace('$2b$', '$2y$', $user->password);
+
+    // Verifikasi password lama
+    if (!Hash::check($request->old_password, $hashedPassword)) {
+        return response()->json([
+            'message' => 'Password lama tidak sesuai'
+        ], 400);
+    }
+
+    // Update password baru
+    $user->password = Hash::make($request->new_password);
+    $user->save();
+
+    return response()->json([
+        'message' => 'Password berhasil diubah'
+    ]);
+}
 
     public function logout(Request $request)
     {

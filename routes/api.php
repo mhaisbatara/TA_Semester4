@@ -16,6 +16,8 @@ Route::post('/chat',       [ApiController::class, 'chat']);
 // Prediksi obesitas (public)
 Route::post('/predict-obesity', [ApiController::class, 'predict']);
 
+
+
 // Endpoint Test Koneksi
 Route::get('/test', function () {
     return response()->json([
@@ -50,4 +52,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Simpan & history prediksi obesitas
     Route::post('/obesity/save',    [ApiController::class, 'save']);
     Route::get('/obesity/history',  [ApiController::class, 'history']);
+
+    Route::post('/change-password', [ApiController::class, 'changePassword']);
 });
